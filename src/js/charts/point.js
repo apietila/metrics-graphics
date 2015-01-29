@@ -53,6 +53,16 @@ charts.point = function(args) {
             pts.attr('r', args.point_size);
         }
 
+        if (args.legend) {
+            var legend = '';
+            for (var i = args.legend.length - 1; i >= 0; i--) {
+                legend = "<span style=\"color:" +
+                    args.scales.color(args.legend[i])+"\">&bull;" +
+                    args.legend[i] + "&nbsp;</span>" + legend;
+            }
+            $(args.legend_target).html(legend);
+        }
+
         return this;
     };
 
