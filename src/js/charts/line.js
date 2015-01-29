@@ -19,13 +19,20 @@ charts.line = function(args) {
         var mapToY = function(d) {
             return d[args.y_accessor];
         };
+	var isDefinedY = function(d) {
+            return (d[args.y_accessor]!==undefined &&
+                    d[args.y_accessor]!==null);
+	};
 
         //main area
         var area = d3.svg.area()
             .x(args.scalefns.xf)
             .y0(args.scales.Y.range()[0])
             .y1(args.scalefns.yf)
-            .interpolate(args.interpolate);
+	if (args.interpolate)
+            area = area.interpolate(args.interpolate);
+	if (args.missing_is_undefined)
+            area = area.defined(isDefinedY);
 
         //confidence band
         var confidence_area;
@@ -47,21 +54,27 @@ charts.line = function(args) {
                     var u = args.show_confidence_band[1];
                     return args.scales.Y(d[u]);
                 })
-                .interpolate(args.interpolate);
+            if (args.interpolate)
+		confidence_area = confidence_area.interpolate(args.interpolate);
+            if (args.missing_is_undefined)
+		area = area.defined(isDefinedY);
         }
 
         //main line
         var line = d3.svg.line()
             .x(args.scalefns.xf)
             .y(args.scalefns.yf)
-            .interpolate(args.interpolate);
+	if (args.interpolate)
+            line = line.interpolate(args.interpolate)
+	if (args.missing_is_undefined)
+            line = line.defined(isDefinedY);
 
         //for animating line on first load
         var flat_line = d3.svg.line()
             .x(args.scalefns.xf)
             .y(function() { return args.scales.Y(data_median); })
-            .interpolate(args.interpolate);
-
+	if (args.interpolate)
+            flat_line = line.interpolate(args.interpolate);
 
         //for building the optional legend
         var legend = '';
