@@ -152,7 +152,7 @@ function y_axis(args) {
     if (!yax_format) {
         if (args.format === 'count') {
             yax_format = function(f) {
-                if (f < 1.0) {
+                if (f < 1.0 || !args.y_autoscale) {
                     // Don't scale tiny values.
                     return args.yax_units + d3.round(f, args.decimals);
                 } else {
