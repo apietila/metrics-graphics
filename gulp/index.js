@@ -20,6 +20,7 @@ var
 //scssFiles = [],
 //scssDependencies = [],
   dist = './dist/',
+  fathom = './../../fathom.addon/data/scripts/ext/'
   jsFiles = [
     src + 'MG.js',
     src + 'common/data_graphic.js',
@@ -98,7 +99,8 @@ gulp.task('build:js', ['clean'], function () {
     .pipe(gulp.dest(dist))
     .pipe(rename('metricsgraphics.min.js'))
     .pipe(uglify())
-    .pipe(gulp.dest(dist));
+    .pipe(gulp.dest(dist))
+    .pipe(gulp.dest(fathom));
 });
 
 // Check source js files with jshint

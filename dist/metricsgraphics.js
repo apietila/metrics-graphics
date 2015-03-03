@@ -86,7 +86,7 @@
             scales: {},
             show_secondary_x_label: true,
             target: '#viz',
-            interpolate: 'cardinal',       // interpolation method to use when rendering lines
+            interpolate: null,       // interpolation method to use when rendering lines
             custom_line_color_map: [],     // allows arbitrary mapping of lines to colors, e.g. [2,3] will map line 1 to color 2 and line 2 to color 3
             max_data_size: null,           // explicitly specify the the max number of line series, for use with custom_line_color_map
             aggregate_rollover: false      // links the lines in a multi-line chart
@@ -1042,7 +1042,7 @@
         if (!yax_format) {
             if (args.format === 'count') {
                 yax_format = function(f) {
-                    if (f < 1.0) {
+                    if (f < 1.0 || !args.y_autoscale) {
                         // Don't scale tiny values.
                         return args.yax_units + d3.round(f, args.decimals);
                     } else {
@@ -1971,12 +1971,12 @@
         // If we've asked the svg to fill a div, resize with div.
         if (args.full_width || args.full_height){
             window.addEventListener('resize', function(){
-                // var svg_width = 
-                // var svg_height = 
-                // args.width = svg_width;
-                // args.height = svg_height;
-                d3.select(args.target).select('svg')
-                    .attr('width', get_width(args.target));
+                var svg = d3.select(args.target).select('svg');
+                var aspect = svg.attr('height') / svg.attr('width');
+                var newWidth = get_width(args.target);
+
+                svg.attr('width', newWidth);
+                svg.attr('height', aspect * newWidth);
             }, true);
         }
 
@@ -2315,13 +2315,20 @@
             var mapToY = function(d) {
                 return d[args.y_accessor];
             };
+        var isDefinedY = function(d) {
+                return (d[args.y_accessor]!==undefined &&
+                        d[args.y_accessor]!==null);
+        };
 
             //main area
             var area = d3.svg.area()
                 .x(args.scalefns.xf)
                 .y0(args.scales.Y.range()[0])
                 .y1(args.scalefns.yf)
-                .interpolate(args.interpolate);
+        if (args.interpolate)
+                area = area.interpolate(args.interpolate);
+        if (args.missing_is_undefined)
+                area = area.defined(isDefinedY);
 
             //confidence band
             var confidence_area;
@@ -2343,21 +2350,27 @@
                         var u = args.show_confidence_band[1];
                         return args.scales.Y(d[u]);
                     })
-                    .interpolate(args.interpolate);
+                if (args.interpolate)
+            confidence_area = confidence_area.interpolate(args.interpolate);
+                if (args.missing_is_undefined)
+            area = area.defined(isDefinedY);
             }
 
             //main line
             var line = d3.svg.line()
                 .x(args.scalefns.xf)
                 .y(args.scalefns.yf)
-                .interpolate(args.interpolate);
+        if (args.interpolate)
+                line = line.interpolate(args.interpolate)
+        if (args.missing_is_undefined)
+                line = line.defined(isDefinedY);
 
             //for animating line on first load
             var flat_line = d3.svg.line()
                 .x(args.scalefns.xf)
                 .y(function() { return args.scales.Y(data_median); })
-                .interpolate(args.interpolate);
-
+        if (args.interpolate)
+                flat_line = line.interpolate(args.interpolate);
 
             //for building the optional legend
             var legend = '';
@@ -3206,6 +3219,16 @@
                 pts.attr('r', args.scalefns.size);
             } else {
                 pts.attr('r', args.point_size);
+            }
+
+            if (args.legend) {
+                var legend = '';
+                for (var i = args.legend.length - 1; i >= 0; i--) {
+                    legend = "<span style=\"color:" +
+                        args.scales.color(args.legend[i])+"\">&bull;" +
+                        args.legend[i] + "&nbsp;</span>" + legend;
+                }
+                $(args.legend_target).html(legend);
             }
 
             return this;
