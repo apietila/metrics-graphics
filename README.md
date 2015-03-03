@@ -6,16 +6,16 @@ _MetricsGraphics.js_ is a library optimized for visualizing and laying out time-
 
 A sample set of examples may be found on [the examples page](http://metricsgraphicsjs.org). The example below demonstrates how easy it is to produce a graphic. Our graphics function provides a robust layer of indirection, allowing one to more efficiently build, say, a dashboard of interactive graphics, each of which may be pulling data from a different data source. For the complete list of options, and for download instructions, [take a look at the sections below](https://github.com/mozilla/metrics-graphics/wiki).
 
-```
+```js
 MG.data_graphic({
     title: 'Downloads',
     description: 'This graphics shows Firefox GA downloads for the past six months.',
-    data: downloads_data, \\ an array of objects, such as [{value:100,date:...},...]
+    data: downloads_data, // an array of objects, such as [{value:100,date:...},...]
     width: 600,
     height: 250,
-    target: '#downloads', \\ the html element that the graphic is inserted in
-    x_accessor: 'date',  \\ the key that accesses the x value
-    y_accessor: 'value' \\ the key that accesses the y value
+    target: '#downloads', // the html element that the graphic is inserted in
+    x_accessor: 'date',  // the key that accesses the x value
+    y_accessor: 'value' // the key that accesses the y value
 })
 ```
 
@@ -37,7 +37,7 @@ Though originally envisioned for Mozilla Metrics dashboard projects, we are maki
 2. Follow the examples [here](https://github.com/mozilla/metrics-graphics/blob/master/examples/index.htm) and [here](https://github.com/mozilla/metrics-graphics/blob/master/examples/js/main.js) to see how graphics are laid out and built. The examples use json data from [examples/data](https://github.com/mozilla/metrics-graphics/blob/master/examples/data), though you may easily pull data from elsewhere.
 
 ## Dependencies
-The library depends on [D3](http://d3js.org) and [jQuery](http://jquery.com/).
+The library depends on [D3](http://d3js.org) and [jQuery](http://jquery.com/). As of v2.2, if you do not wish to use jQuery, set [show_tooltips](https://github.com/mozilla/metrics-graphics/wiki/Graphic#show_tooltips) to false, either globally in ``metricsgraphics.js``, or within every ``MG.data_graphic`` call. Only tooltips and [buttons](https://github.com/mozilla/metrics-graphics/wiki/Button-Layout) depend on jQuery.
 
 ## Contributing
 If you would like to help extend MetricsGraphics.js or fix bugs, please [fork the library](https://github.com/mozilla/metrics-graphics) and install [Node.js](http://nodejs.org). Then, from the project's root directory install [gulp](http://gulpjs.com):
@@ -70,7 +70,7 @@ To run the development server (accessible at http://localhost:4300):
 * [Building a button layout](https://github.com/mozilla/metrics-graphics/wiki/Button-Layout)
 
 ## Download package
-The download package includes everything that you see on [metricsgraphicsjs.org](http://metricsgraphicsjs.org). In order to use the library in your own project, the only files that you'll need are the ones under ``dist``. Remember to load the set of third-party libraries that are there in the examples pages. If your project uses Bootstrap, make sure you load MetricsGraphics.js after it.
+The download package includes everything that you see on [metricsgraphicsjs.org](http://metricsgraphicsjs.org). In order to use the library in your own project, the only files that you'll need are the ones under ``dist``. Remember to load ``D3`` and ``jQuery``. If you don't care about tooltips or the button layout, you won't need the latter. If your project uses Bootstrap, make sure you load MetricsGraphics.js after it.
 
 ## Frequently asked question
 __What does MetricsGraphics.js do that library x doesn't do?__

@@ -1,6 +1,7 @@
 function y_rug(args) {
     'use strict';
     var svg = mg_get_svg_child_of(args.target);
+
     var buffer_size = args.chart_type === 'point'
         ? args.buffer / 2
         : args.buffer * 2 / 3;
@@ -46,13 +47,18 @@ function y_axis(args) {
     }
 
     var svg = mg_get_svg_child_of(args.target);
-    var $svg = $($(args.target).find('svg').get(0));
+
     var g;
 
     var min_y,
         max_y;
 
     args.scalefns.yf = function(di) {
+        //since we want to show actual zeros when missing_is_hidden is on
+        if(args.missing_is_hidden && di['missing']) {
+            return args.scales.Y(di[args.y_accessor]) + 42.1234;
+        }
+
         return args.scales.Y(di[args.y_accessor]);
     };
 
@@ -169,7 +175,7 @@ function y_axis(args) {
     }
 
     //remove the old y-axis, add new one
-    $svg.find('.mg-y-axis').remove();
+    svg.selectAll('.mg-y-axis').remove();
 
     if (!args.y_axis) {
         return this;
@@ -226,8 +232,8 @@ function y_axis(args) {
 
     //is our data object all ints?
     var data_is_int = true;
-    $.each(args.data, function(i, d) {
-        $.each(d, function(i, d) {
+    args.data.forEach(function(d, i) {
+        d.forEach(function(d, i) {
             if (d[args.y_accessor] % 1 !== 0) {
                 data_is_int = false;
                 return false;
@@ -297,10 +303,9 @@ function y_axis_categorical(args) {
     };
 
     var svg = mg_get_svg_child_of(args.target);
-    var $svg = $($(args.target).find('svg').get(0));
 
     //remove the old y-axis, add new one
-    $svg.find('.mg-y-axis').remove();
+    svg.selectAll('.mg-y-axis').remove();
 
     var g = svg.append('g')
         .classed('mg-y-axis', true)

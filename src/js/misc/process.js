@@ -56,12 +56,17 @@ function raw_data_transformation(args) {
 function process_line(args) {
     'use strict';
     //do we have a time-series?
-    var is_time_series = ($.type(args.data[0][0][args.x_accessor]) === 'date')
-            ? true
-            : false;
+    var is_time_series = args.data[0][0][args.x_accessor] instanceof Date
+        ? true
+        : false;
+
+    //force linear interpolation when missing_is_hidden is enabled
+    if (args.missing_is_hidden) {
+        args.interpolate = 'linear';
+    }
 
     //are we replacing missing y values with zeros?
-    if (args.missing_is_zero
+    if ((args.missing_is_zero || args.missing_is_hidden) 
             && args.chart_type === 'line'
             && is_time_series
         ) {
@@ -94,7 +99,7 @@ function process_line(args) {
 
                 //check to see if we already have this date in our data object
                 var existing_o = null;
-                $.each(args.data[i], function(i, val) {
+                args.data[i].forEach(function(val, i) {
                     if (Date.parse(val[args.x_accessor]) === Date.parse(new Date(d))) {
                         existing_o = val;
 
@@ -106,6 +111,7 @@ function process_line(args) {
                 if (!existing_o) {
                     o[args.x_accessor] = new Date(d);
                     o[args.y_accessor] = 0;
+                    o['missing'] = true; //we want to distinguish between zero-value and missing observations
                     processed_data.push(o);
                 }
                 //otherwise, use the existing object for that date

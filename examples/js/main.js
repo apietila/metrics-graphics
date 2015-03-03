@@ -1,4 +1,4 @@
-$(document).ready(function() {
+(function() {
     'use strict';
     // json data that we intend to update later on via on-screen controls
     var split_by_data;
@@ -114,7 +114,7 @@ $(document).ready(function() {
         // add a line chart that has a few observations
         MG.data_graphic({
             title: "Few Observations",
-            description: "We sometimes have only a few observations. By setting <i>missing_is_zero: true</i>, missing values for a time-series will be interpreted as zeros. In this example, we've overridden the rollover callback to show 'no date' for missing observations and have set the <i>min_x</i> and <i>max_x</i> options in order to expand the date range.",
+            description: "We sometimes have only a few observations. By setting <i>missing_is_zero: true</i>, missing values for a time-series will be interpreted as zeros. In this example, we've overridden the rollover callback to show 'no data' for missing observations and have set the <i>min_x</i> and <i>max_x</i> options in order to expand the date range.",
             data: data,
             interpolate: 'basic',
             missing_is_zero: true,
@@ -131,7 +131,7 @@ $(document).ready(function() {
                 var date = df(d.date);
                 var y_val = (d.value === 0) ? 'no data' : d.value;
 
-                $('#missing-y svg .mg-active-datapoint')
+                d3.select('#missing-y svg .mg-active-datapoint')
                     .text(date +  '   ' + y_val);
             }
         });
@@ -154,10 +154,44 @@ $(document).ready(function() {
             y_accessor: 'value'
         });
     });
+    
+    d3.json('data/missing-is-hidden.json', function(data) {
+        data = MG.convert.date(data, 'date');
+        MG.data_graphic({
+            title: 'Broken Lines',
+            description: 'Setting <i>missing_is_hidden</i> to true will hide missing ranges rather than considering them to be zeros or interpolating between the two points on either side.',
+            data: data,
+            missing_is_hidden: true,
+            width: torso.width,
+            height: torso.height,
+            right: torso.right,
+            target: '#missing_is_hidden',
+            area: false,
+            show_secondary_x_label: false
+        });
+    });
+    
+    d3.json('data/missing-is-hidden-multi.json', function(data) {
+        for (var i = 0; i < data.length; i++) {
+            data[i] = MG.convert.date(data[i], 'date');
+        }
+
+        // add a multi-line chart
+        MG.data_graphic({
+            title: 'Broken Multi-Lines',
+            description: 'Setting <i>missing_is_hidden</i> works with multiple lines too.',
+            data: data,
+            width: torso.width,
+            height: torso.height,
+            right: torso.right,
+            missing_is_hidden: true,
+            target: '#missing_is_hidden_multi',
+            show_secondary_x_label: false
+        });
+    });
 
     d3.json('data/fake_users1.json', function(data) {
         data = MG.convert.date(data, 'date');
-
         var fake_baselines = [{value: 160000000, label: 'a baseline'}];
 
         // add a line chart
@@ -228,7 +262,7 @@ $(document).ready(function() {
     });
 
     d3.json('data/fake_users2.json', function(data) {
-        for (var i = 0;i < data.length; i++) {
+        for (var i = 0; i < data.length; i++) {
             data[i] = MG.convert.date(data[i], 'date');
         }
 
@@ -641,7 +675,7 @@ $(document).ready(function() {
             mouseover: function(d, i) {
                 // custom format the rollover text, show days
                 var prefix = d3.formatPrefix(d.value);
-                $('#custom-rollover svg .mg-active-datapoint')
+                d3.select('#custom-rollover svg .mg-active-datapoint')
                     .text('Day ' + (i + 1) + '   ' + prefix.scale(d.value).toFixed(2) + prefix.symbol);
             },
             target: '#custom-rollover',
@@ -720,7 +754,7 @@ $(document).ready(function() {
         target: '#histogram1',
         y_extended_ticks: true,
         mouseover: function(d, i) {
-            $('#histogram1 svg .mg-active-datapoint')
+            d3.select('#histogram1 svg .mg-active-datapoint')
                 .text('Value: ' + d3.round(d.x,2) +  '   Count: ' + d.y);
         }
     });
@@ -751,7 +785,7 @@ $(document).ready(function() {
                 } else {
                     string = d3.round(d.x,2) + ' Months';
                 }
-                $('#ufos svg .mg-active-datapoint')
+                d3.select('#ufos svg .mg-active-datapoint')
                     .text(string + '       Volume: ' + d.y);
             }
         });
@@ -777,7 +811,7 @@ $(document).ready(function() {
         x_accessor:'value',
         y_accessor:'count',
         mouseover: function(d, i) {
-            $('#histogram2 svg .mg-active-datapoint')
+            d3.select('#histogram2 svg .mg-active-datapoint')
                 .text('Value: ' + d3.round(d.x,2) +  '   Count: ' + d.y);
         }
     });
@@ -798,7 +832,7 @@ $(document).ready(function() {
         y_extended_ticks: true,
         x_accessor:'val1',
         mouseover: function(d, i) {
-            $('#histogram3 svg .mg-active-datapoint')
+            d3.select('#histogram3 svg .mg-active-datapoint')
                 .text('Value: ' + d3.round(d.x,2) +  '   Count: ' + d.y);
         }
     });
@@ -820,7 +854,7 @@ $(document).ready(function() {
         y_extended_ticks: true,
         x_accessor:'val1',
         mouseover: function(d, i) {
-            $('#histogram4 svg .mg-active-datapoint')
+            d3.select('#histogram4 svg .mg-active-datapoint')
                 .text('Value: ' + d3.round(d.x,2) +  '   Count: ' + d.y);
         }
     });
@@ -997,7 +1031,8 @@ $(document).ready(function() {
     var table1 = MG.data_table({
             data: table_data,
             title: 'A Data Table',
-            description: 'A table has many of the same properties as any other data graphic.'
+            description: 'A table has many of the same properties as any other data graphic.',
+            show_tooltips: true
         })
         .target('#table1')
         .title({
@@ -1187,4 +1222,4 @@ $(document).ready(function() {
 
         return data_spliced;
     }
-});
+})();

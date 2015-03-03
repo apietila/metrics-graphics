@@ -14,6 +14,7 @@ MG.data_graphic = function() {
     var defaults = {};
     defaults.all = {
         missing_is_zero: false,       // if true, missing values will be treated as zeros
+        missing_is_hidden: false,     // if true, missing values will appear as broken segments
         legend: '' ,                  // an array identifying the labels for a chart's lines
         legend_target: '',            // if set, the specified element is populated with a legend
         error: '',                    // if set, a graph will show an error icon and log the error to the console
@@ -76,7 +77,8 @@ MG.data_graphic = function() {
         interpolate: null,       // interpolation method to use when rendering lines
         custom_line_color_map: [],     // allows arbitrary mapping of lines to colors, e.g. [2,3] will map line 1 to color 2 and line 2 to color 3
         max_data_size: null,           // explicitly specify the the max number of line series, for use with custom_line_color_map
-        aggregate_rollover: false      // links the lines in a multi-line chart
+        aggregate_rollover: false,     // links the lines in a multi-line chart
+        show_tooltips: true            // if enabled, a chart's description will appear in a tooltip (requires jquery)
     };
 
     defaults.point = {
@@ -95,8 +97,8 @@ MG.data_graphic = function() {
 
     defaults.histogram = {
         mouseover: function(d, i) {
-            $('#histogram svg .mg-active-datapoint')
-                .html('Frequency Count: ' + d.y);
+            d3.select('#histogram svg .mg-active-datapoint')
+                .text('Frequency Count: ' + d.y);
         },
         binned: false,
         bins: null,

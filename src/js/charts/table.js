@@ -115,7 +115,7 @@ MG.data_table = function(args) {
                 .style('text-align', td_type === 'title' ? 'left' : 'right')
                 .text(th_text);
 
-            if (this_col.description) {
+            if (args.show_tooltips && this_col.description) {
                 th.append('i')
                     .classed('fa', true)
                     .classed('fa-question-circle', true)
@@ -172,7 +172,7 @@ MG.data_table = function(args) {
 
                         if (this_format === 'percentage')  formatter = d3.format('%p');
                         if (this_format === 'count')       formatter = d3.format("0,000");
-                        if (this_format === 'temperature') formatter = function(t) { return t +'º'; };
+                        if (this_format === 'temperature') formatter = function(t) { return t +'°'; };
 
                         td_text = formatter(td_text);
                     }
