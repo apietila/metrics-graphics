@@ -20,7 +20,7 @@ var
 //scssFiles = [],
 //scssDependencies = [],
   dist = './dist/',
-  fathom = './../../fathom.addon/data/scripts/ext/'
+  fathom = './../../fathom.addon.github.git/data/extscripts/'
   jsFiles = [
     src + 'MG.js',
     src + 'common/data_graphic.js',

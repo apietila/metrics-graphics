@@ -28,6 +28,7 @@
         defaults.all = {
             missing_is_zero: false,       // if true, missing values will be treated as zeros
             missing_is_hidden: false,     // if true, missing values will appear as broken segments
+            missing_is_undefined: false,  // if true, missing values will appear as broken segments
             legend: '' ,                  // an array identifying the labels for a chart's lines
             legend_target: '',            // if set, the specified element is populated with a legend
             error: '',                    // if set, a graph will show an error icon and log the error to the console
@@ -2856,10 +2857,10 @@
                             .style('opacity', 1);
                       }
                     });
-                } else if (args.missing_is_hidden 
-                        && d[args.y_accessor] == 0 
-                        && d['missing']
-                    ) {
+                } else if (//args.missing_is_hidden 
+            //	&& d[args.y_accessor] == 0 
+            //	&& d['missing'])) {
+            d['missing']) {
                     //disable rollovers for hidden parts of the line
                     return;
                 } else {

@@ -530,10 +530,10 @@ charts.line = function(args) {
                         .style('opacity', 1);
                   }
                 });
-            } else if (args.missing_is_hidden 
-                    && d[args.y_accessor] == 0 
-                    && d['missing']
-                ) {
+            } else if (//args.missing_is_hidden 
+		//	&& d[args.y_accessor] == 0 
+		//	&& d['missing'])) {
+		d['missing']) {
                 //disable rollovers for hidden parts of the line
                 return;
             } else {
