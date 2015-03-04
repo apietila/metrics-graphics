@@ -604,6 +604,7 @@ charts.line = function(args) {
                         lineCount = 1;
 
                         d.values.forEach(function(datum) {
+			    if (datum.missing) return;
                             var label = textContainer.append('tspan')
                                 .attr({
                                   x: 0,
